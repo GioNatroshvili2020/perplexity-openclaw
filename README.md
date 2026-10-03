@@ -172,9 +172,14 @@ fresh cookie.
 
 ## Skills (for the agent)
 
-This repo ships skills that let the agent reconfigure the gateway without the user knowing
-internals. Copy them into the agent's skills directory, or just tell the agent to read them from
-`skills/`:
+This repo is the **single source of truth** for these skills. Edit them here, then install into
+the agent workspace — and re-run after every `git pull`:
+
+```bash
+./install-skills.sh [agent-id]      # default: coordinator
+```
+
+The agent can also read any skill directly from `skills/` when a skill references it by path:
 
 | Skill | Purpose |
 |---|---|
