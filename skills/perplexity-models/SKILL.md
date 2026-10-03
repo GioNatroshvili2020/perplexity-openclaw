@@ -1,7 +1,7 @@
 ---
 name: perplexity-models
-description: Route web research, coding, and deep reasoning to Perplexity Pro models via pplx_* MCP tools; file upload, file output, large-output handling, and recovery.
-whenToUse: When a task needs web search, current information, code/file analysis, or deep technical reasoning that should be routed to a Perplexity Pro model to conserve DeepSeek API tokens.
+description: Route web research, summarization, file Q&A, code explanation/review, and deep reasoning to Perplexity Pro models via pplx_* MCP tools; file upload, file output, large-output handling, and recovery. NOT for the iterative write-run-fix coding loop.
+whenToUse: When a task needs web search, current information, summarization, "find/explain X in a file", code explanation/review, or deep reasoning to conserve DeepSeek API tokens. Route iterative coding (write/run/debug/refactor) to the harness model (DeepSeek) instead.
 ---
 
 # Perplexity Pro models (via MCP)
@@ -16,7 +16,7 @@ Tool names are prefixed per harness — use whatever your tool list shows (`perp
 |---|---|
 | `pplx_best` | Fast default / unsure. |
 | `pplx_gpt56_terra` | Broad research + technical synthesis. |
-| `pplx_claude_s50` | Coding, file analysis, structured output. |
+| `pplx_claude_s50` | Code explanation/review, file analysis, structured output. |
 | `pplx_kimi_k3_thinking` | Deep reasoning on hard topics. |
 | `pplx_deep_research` | Maximum-depth research. |
 | `pplx_session_status` | Cookie validity / tier / expiry. |
@@ -71,9 +71,11 @@ Run `python3 ~/repos/perplexity-openclaw/scripts/normalize-answer.py <raw> -o <f
 - `model_access_denied` with `required_tier: "max"` -> switch to a Pro-tier model.
 - Any other error -> `~/repos/perplexity-openclaw/skills/troubleshoot-perplexity-mcp/SKILL.md`; registry edits -> `update-model-registry`.
 
-## Token economy
+## Token economy & delegation boundaries
 
-- Route heavy research/reasoning here; reserve DeepSeek (yourself) for orchestration and final synthesis.
+- Route **one-shot knowledge/retrieval/reasoning** here (research, summarization, "find X in a file", code explanation/review). Reserve DeepSeek (yourself) for orchestration and final synthesis.
+- **Do NOT delegate the iterative coding loop** (write → run → debug → refactor → test). These models cannot read or execute their own code, so they fail to converge even when fed errors (verified: a trivial bug survived 6 iterations). Route that loop to the harness model (DeepSeek), which reads, runs, and patches files.
+- One-shot code *generation* is OK when the spec is precise and you verify the output yourself (compile / head-tail check); *debugging* must go to the harness.
 - Never paste file contents — upload via `files=[]`.
 - Prefer `output_path` for generated code/HTML/docs and read the file; don't copy the answer back.
 - Leave `include_search_results` off unless you actually need citations.

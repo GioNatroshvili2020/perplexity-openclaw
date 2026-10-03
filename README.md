@@ -121,8 +121,8 @@ pplx_claude_s50(query="Narrow it to ones near Žižkov")     # remembers the pre
 # Single-use task — start fresh:
 pplx_claude_s50(query="Summarize this", new_chat=true)
 
-# Upload files instead of pasting code (token saver):
-pplx_claude_s50(query="Fix the bug in these files", files=["/abs/src/app.py", "/abs/tests/test_app.py"])
+# Upload files for analysis / Q&A (token saver):
+pplx_claude_s50(query="Where is the auth logic in these files and how does it work?", files=["/abs/src/app.py", "/abs/tests/test_app.py"])
 
 # Generate code straight to a downloadable file:
 pplx_claude_s50(query="Write a FastAPI CRUD app", output_path="/abs/out/app.py")
