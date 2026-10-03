@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import re
+from pathlib import Path
 from time import time
 from typing import TYPE_CHECKING, Any, cast
 
 from perplexity_webui_scraper._internal.exceptions import (
     AuthenticationError,
     FileAccessError,
+    FileUploadError,
+    FileValidationError,
     ModelAccessError,
     ModelStatusError,
     RateLimitError,
@@ -147,6 +150,8 @@ def _ask(
     research_interaction: str = "auto",
     thread_uuid: str | None = None,
     new_chat: bool = False,
+    files: list[str] | None = None,
+    output_path: str | None = None,
     strip_fence: bool = True,
     include_search_results: bool = False,
     max_chars: int | None = None,
@@ -157,10 +162,11 @@ def _ask(
     conversation (same chat). Set ``new_chat=True`` to start a fresh chat for a
     single-use task. Pass ``thread_uuid`` to continue a specific thread.
 
-    The answer is cleaned for direct use: injected ``[url](url)`` artifacts are
-    reverted to bare URLs and, unless ``strip_fence=False``, a single wrapping
-    markdown code fence is removed. ``max_chars`` truncates with an explicit
-    marker. ``include_search_results`` opts into shipping web citations.
+    ``files`` uploads local file paths as attachments instead of pasting their
+    contents (saves tokens); when files are present the search focus switches to
+    ``"writing"`` so the model reads them rather than web-searching. ``output_path``
+    writes the cleaned answer to a file and returns a short ``preview`` instead of
+    the full text (saves tokens and makes generated code downloadable).
 
     Args:
         client: Active :class:`~perplexity_webui_scraper.Perplexity` client.
@@ -177,16 +183,23 @@ def _ask(
         thread_uuid: Optional UUID of a specific thread to continue (overrides the default).
         new_chat: When ``True``, start a fresh conversation instead of reusing this
             model's current thread.
+        files: Optional list of local file paths to upload as attachments.
+        output_path: Optional file path to write the cleaned answer to.
         strip_fence: Remove a single wrapping markdown code fence from the answer.
         include_search_results: Include the ``search_results`` list in the result.
         max_chars: Truncate the answer to this many characters (with a marker).
 
     Returns:
-        Dict with ``answer``, and optionally ``search_results`` and ``conversation_uuid``.
+        Dict with ``answer`` (or ``file`` + ``preview`` when ``output_path`` is set),
+        and optionally ``search_results`` and ``conversation_uuid``.
     """
     # 1. Proactive session check so an expired cookie is reported immediately.
     if not session_status(client).get("valid"):
         return _session_expired()
+
+    # File analysis should read the attachment, not trigger web search.
+    if files and search_focus == "web":
+        search_focus = "writing"
 
     # 2. Resolve which conversation to use.
     conversation: Conversation | None = None
@@ -227,7 +240,7 @@ def _ask(
 
     # 3. Ask.
     try:
-        conversation.ask(query)
+        conversation.ask(query, files=files)
     except AuthenticationError:
         return _session_expired()
     except RateLimitError as exc:
@@ -246,6 +259,8 @@ def _ask(
             "error_type": "file_access_denied",
             "account_tier": exc.account_tier,
         }
+    except (FileValidationError, FileUploadError) as exc:
+        return {"error": str(exc), "error_type": "file_error"}
     except ModelStatusError as exc:
         return {
             "error": str(exc),
@@ -267,7 +282,23 @@ def _ask(
     if not explicit_thread:
         _DEFAULT_THREADS[model.id] = (conversation, time())
 
-    result: dict[str, Any] = {"answer": answer}
+    # 6. Build the result. When output_path is set, write the file and return a
+    #    short preview instead of the full answer (token-efficient + downloadable).
+    if output_path:
+        try:
+            out = Path(output_path)
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_text(answer, encoding="utf-8")
+        except OSError as exc:
+            return {"error": f"Failed to write {output_path}: {exc}", "error_type": "output_write_failed"}
+
+        result: dict[str, Any] = {
+            "file": str(out),
+            "bytes": len(answer.encode("utf-8")),
+            "preview": answer[:200] + ("..." if len(answer) > 200 else ""),
+        }
+    else:
+        result = {"answer": answer}
 
     if include_search_results and conversation.search_results:
         result["search_results"] = [

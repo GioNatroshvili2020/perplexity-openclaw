@@ -99,14 +99,19 @@ Open `https://www.perplexity.ai`, press `F12` → **Console**, paste the content
 
 ---
 
-## Chat modes
+## Chat modes & file handling
 
-Each model tool accepts two optional controls:
+Each model tool accepts these optional controls:
 
 | Parameter | Default | Meaning |
 |-----------|---------|---------|
 | `new_chat` | `false` | Reuse this model's ongoing conversation (same chat). Set `true` to start fresh. |
-| `thread_uuid` | *(none)* | Continue a *specific* thread by its UUID (advanced; overrides the default). |
+| `thread_uuid` | *(none)* | Continue a *specific* thread by its UUID (advanced). |
+| `files` | *(none)* | Local file paths to **upload** as attachments (no pasting contents). |
+| `output_path` | *(none)* | Write the cleaned answer to this file; returns `{file, bytes, preview}` instead of the full text. |
+| `strip_fence` | `true` | Drop a single wrapping markdown code fence. |
+| `max_chars` | *(none)* | Truncate the answer with an explicit marker. |
+| `include_search_results` | `false` | Also return web citations (off by default to save tokens). |
 
 ```text
 # Continuous agentic task — reuse the same chat (default):
@@ -116,9 +121,19 @@ pplx_claude_s50(query="Narrow it to ones near Žižkov")     # remembers the pre
 # Single-use task — start fresh:
 pplx_claude_s50(query="Summarize this", new_chat=true)
 
-# Advanced — resume a specific past thread:
-pplx_claude_s50(query="Where was I?", thread_uuid="9dcd0939-...")
+# Upload files instead of pasting code (token saver):
+pplx_claude_s50(query="Fix the bug in these files", files=["/abs/src/app.py", "/abs/tests/test_app.py"])
+
+# Generate code straight to a downloadable file:
+pplx_claude_s50(query="Write a FastAPI CRUD app", output_path="/abs/out/app.py")
 ```
+
+### File upload & download (token saver)
+
+- **Upload:** pass local paths via `files` — the tool uploads them as attachments and auto-switches to
+  `writing` mode so the model reads the files instead of web-searching. Max 30 files / 50 MB each.
+- **Download:** pass `output_path` — the cleaned answer (link artifacts reverted, code fence stripped)
+  is written to that path, and the tool returns a short `{file, bytes, preview}`.
 
 "Same chat" is **per model** — each model keeps its own thread. Conversations are cached for
 30 minutes of inactivity, then a new one starts automatically.

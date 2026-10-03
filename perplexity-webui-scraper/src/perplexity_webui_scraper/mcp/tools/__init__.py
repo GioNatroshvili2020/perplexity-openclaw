@@ -81,6 +81,8 @@ def _register_model_tool(
         query: str,
         new_chat: bool = False,
         thread_uuid: str | None = None,
+        files: list[str] | None = None,
+        output_path: str | None = None,
         strip_fence: bool = True,
         include_search_results: bool = False,
         max_chars: int | None = None,
@@ -97,17 +99,18 @@ def _register_model_tool(
 
         Reuses this model's ongoing conversation by default (same chat). Set
         ``new_chat=True`` for a one-off task. The answer has ``[url](url)``
-        artifacts reverted and, by default, one wrapping code fence stripped, so
-        it is ready to write to a file.
+        artifacts reverted and, by default, one wrapping code fence stripped.
 
         Args:
             query: The question or prompt.
             new_chat: Start a fresh conversation instead of continuing this model's thread.
             thread_uuid: Continue a specific thread by its UUID.
+            files: Optional local file paths to upload as attachments (avoids pasting their contents).
+            output_path: Optional file path to write the answer to; returns a short preview instead of the full text.
             strip_fence: Remove one wrapping markdown code fence from the answer.
             include_search_results: Also return the ``search_results`` list.
             max_chars: Truncate the answer to this many characters.
-            search_focus: ``"web"`` (search) or ``"writing"`` (no sources).
+            search_focus: ``"web"`` (search) or ``"writing"`` (no sources; forced when files are attached).
             source_focus: ``"web"``, ``"academic"``, ``"social"``, ``"finance"``, or ``"all"``.
             time_range: ``"all"``, ``"day"``, ``"week"``, ``"month"``, or ``"year"``.
             language: BCP-47 tag, e.g. ``"en-US"``.
@@ -117,7 +120,7 @@ def _register_model_tool(
             research_interaction: ``"auto"`` or ``"manual"``.
 
         Returns:
-            Dict with ``answer`` and ``conversation_uuid`` (plus ``search_results`` when requested).
+            Dict with ``answer`` (or ``file`` + ``preview``) and ``conversation_uuid``.
         """
         return _ask(
             client=get_client(),
@@ -133,6 +136,8 @@ def _register_model_tool(
             research_interaction=research_interaction,
             thread_uuid=thread_uuid,
             new_chat=new_chat,
+            files=files,
+            output_path=output_path,
             strip_fence=strip_fence,
             include_search_results=include_search_results,
             max_chars=max_chars,
@@ -154,6 +159,8 @@ def _register_custom_tool(mcp: Any, get_client: Callable[[], Perplexity]) -> Non
         query: str,
         new_chat: bool = False,
         thread_uuid: str | None = None,
+        files: list[str] | None = None,
+        output_path: str | None = None,
         strip_fence: bool = True,
         include_search_results: bool = False,
         max_chars: int | None = None,
@@ -193,6 +200,8 @@ def _register_custom_tool(mcp: Any, get_client: Callable[[], Perplexity]) -> Non
             research_interaction=research_interaction,
             thread_uuid=thread_uuid,
             new_chat=new_chat,
+            files=files,
+            output_path=output_path,
             strip_fence=strip_fence,
             include_search_results=include_search_results,
             max_chars=max_chars,
