@@ -1,0 +1,16 @@
+// Perplexity -> OpenClaw MCP server (reference config).
+// Merge this `mcpServers` object into ~/.openclaw/openclaw.json (JSON5 is fine).
+//
+// The `command` path is machine-specific: run setup.ps1 / setup.sh once, and it
+// prints the exact block with the correct path. Then replace YOUR_COOKIE.
+{
+  "mcpServers": {
+    "perplexity": {
+      "command": "C:/path/to/perplexity-webui-scraper/.venv/Scripts/perplexity-webui-scraper.exe",
+      "args": ["mcp"],
+      "env": {
+        "PERPLEXITY_SESSION_TOKEN": "YOUR_COOKIE"
+      }
+    }
+  }
+}

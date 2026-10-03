@@ -1,0 +1,15 @@
+# Python / build artifacts
+.venv/
+__pycache__/
+*.py[cod]
+.uv/
+uv-cache/
+
+# Local secrets — never commit a real cookie
+*.env
+.pplx-session*
+.env.local
+
+# OS noise
+.DS_Store
+Thumbs.db
