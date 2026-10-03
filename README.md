@@ -178,6 +178,7 @@ internals. Copy them into the agent's skills directory, or just tell the agent t
 
 | Skill | Purpose |
 |---|---|
+| [`skills/perplexity-models/SKILL.md`](skills/perplexity-models/SKILL.md) | **How to use the models** — query modes, file upload, file output, token economy. |
 | [`skills/rotate-session-cookie/SKILL.md`](skills/rotate-session-cookie/SKILL.md) | Refresh an expired cookie. |
 | [`skills/update-model-registry/SKILL.md`](skills/update-model-registry/SKILL.md) | Add / remove / edit models in `models.json`. |
 | [`skills/troubleshoot-perplexity-mcp/SKILL.md`](skills/troubleshoot-perplexity-mcp/SKILL.md) | Map errors to fixes. |
