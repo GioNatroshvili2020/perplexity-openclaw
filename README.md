@@ -1,8 +1,8 @@
 # Perplexity → OpenClaw MCP gateway
 
 Give an [OpenClaw](https://openclaw.ai) agent (running DeepSeek or any local model) the ability to
-**delegate tasks to your Perplexity Pro models** — GPT-5.6 Terra, Claude Sonnet 5, Gemini 3.8 Flash,
-Grok 4.6, and more — with web search, using only your Perplexity **session cookie** (no official API key).
+**delegate tasks to your Perplexity Pro models** — GPT-6 Sol, Claude Sonnet 5.5, Gemini 3.8 Flash,
+Grok 4.7, and more — with web search, using only your Perplexity **session cookie** (no official API key).
 
 It wraps [`perplexity-webui-scraper`](https://github.com/henrique-coder/perplexity-webui-scraper)
 into an MCP server that drives Perplexity's internal WebUI API. The scraper source is vendored here
@@ -11,7 +11,7 @@ into an MCP server that drives Perplexity's internal WebUI API. The scraper sour
 
 ## What you get
 
-- One MCP tool per Perplexity model — `pplx_best`, `pplx_claude_s50`, `pplx_gpt56_terra`, etc.
+- One MCP tool per Perplexity model — `pplx_best`, `pplx_gpt6_sol`, `pplx_claude_s55`, `pplx_grok47`, etc.
 - A `pplx_session_status` health tool (valid / account tier / expiry timestamp).
 - **Same chat by default** — repeated calls continue one conversation; `new_chat=true` starts fresh.
 - Automatic **cookie-expiry** reporting when the session token stops working.
@@ -115,17 +115,17 @@ Each model tool accepts these optional controls:
 
 ```text
 # Continuous agentic task — reuse the same chat (default):
-pplx_claude_s50(query="Research Georgian restaurants in Prague")
-pplx_claude_s50(query="Narrow it to ones near Žižkov")     # remembers the previous answer
+pplx_claude_s55(query="Research Georgian restaurants in Prague")
+pplx_claude_s55(query="Narrow it to ones near Žižkov")     # remembers the previous answer
 
 # Single-use task — start fresh:
-pplx_claude_s50(query="Summarize this", new_chat=true)
+pplx_claude_s55(query="Summarize this", new_chat=true)
 
 # Upload files for analysis / Q&A (token saver):
-pplx_claude_s50(query="Where is the auth logic in these files and how does it work?", files=["/abs/src/app.py", "/abs/tests/test_app.py"])
+pplx_claude_s55(query="Where is the auth logic in these files and how does it work?", files=["/abs/src/app.py", "/abs/tests/test_app.py"])
 
 # Generate code straight to a downloadable file:
-pplx_claude_s50(query="Write a FastAPI CRUD app", output_path="/abs/out/app.py")
+pplx_claude_s55(query="Write a FastAPI CRUD app", output_path="/abs/out/app.py")
 ```
 
 ### File upload & download (token saver)
@@ -162,11 +162,10 @@ fresh cookie.
 
 ## Models available on Pro
 
-`perplexity/best`, `perplexity/deep-research`, `openai/gpt-5.6-terra` (+`-thinking`),
-`anthropic/claude-sonnet-5` (+`-thinking`), `google/gemini-3.8-flash` (+`-thinking`),
-`x-ai/grok-4.6` (+`-thinking`), `moonshot/kimi-k3-thinking`, `z-ai/glm-5.3`,
-`nvidia/nemotron-3-ultra-thinking`, and more. Models tagged `max` (e.g. `openai/gpt-5.6-sol`,
-`anthropic/claude-opus-5`) return a tier error on Pro.
+`perplexity/best`, `perplexity/deep-research`, `openai/gpt-6-sol`, `anthropic/claude-sonnet-5.5`,
+`x-ai/grok-4.7`, `google/gemini-3.8-flash` (+`-thinking`), `moonshot/kimi-k3-thinking`,
+`z-ai/glm-5.3`, `nvidia/nemotron-3-ultra-thinking`, and more. Models tagged `max`
+(e.g. `anthropic/claude-opus-5`) return a tier error on Pro.
 
 ---
 

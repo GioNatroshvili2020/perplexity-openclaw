@@ -88,6 +88,18 @@
     "is_official": true
   },
   {
+    "id": "openai/gpt-6-sol",
+    "name": "GPT-6 Sol",
+    "description": "OpenAI's most powerful model",
+    "identifier": "gpt6_1_sol",
+    "tool_name": "pplx_gpt6_sol",
+    "provider": "openai",
+    "min_tier": "pro",
+    "mode": "copilot",
+    "status": "available",
+    "is_official": true
+  },
+  {
     "id": "google/gemini-3.8-flash",
     "name": "Gemini 3.8 Flash",
     "description": "Google's latest model",
@@ -124,6 +136,18 @@
     "provider": "anthropic",
     "status": "available",
     "last_tested_at": "2026-09-13T23:13:23.003285Z",
+    "is_official": true
+  },
+  {
+    "id": "anthropic/claude-sonnet-5.5",
+    "name": "Claude Sonnet 5.5",
+    "description": "Anthropic's fast model",
+    "identifier": "claude55sonnet",
+    "tool_name": "pplx_claude_s55",
+    "min_tier": "pro",
+    "mode": "copilot",
+    "provider": "anthropic",
+    "status": "available",
     "is_official": true
   },
   {
@@ -215,6 +239,18 @@
     "provider": "x-ai",
     "status": "available",
     "last_tested_at": "2026-09-13T23:13:51.201091Z",
+    "is_official": true
+  },
+  {
+    "id": "x-ai/grok-4.7",
+    "name": "Grok 4.7",
+    "description": "xAI's most advanced model",
+    "identifier": "grok47thinking",
+    "tool_name": "pplx_grok47",
+    "min_tier": "pro",
+    "mode": "copilot",
+    "provider": "x-ai",
+    "status": "available",
     "is_official": true
   },
   {

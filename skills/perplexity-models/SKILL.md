@@ -15,8 +15,9 @@ Tool names are prefixed per harness — use whatever your tool list shows (`perp
 | Tool | Use for |
 |---|---|
 | `pplx_best` | Fast default / unsure. |
-| `pplx_gpt56_terra` | Broad research + technical synthesis. |
-| `pplx_claude_s50` | Code explanation/review, file analysis, structured output. |
+| `pplx_gpt6_sol` | Broad research + technical synthesis. |
+| `pplx_claude_s55` | Code explanation/review, file analysis, structured output. |
+| `pplx_grok47` | Deep reasoning. |
 | `pplx_kimi_k3_thinking` | Deep reasoning on hard topics. |
 | `pplx_deep_research` | Maximum-depth research. |
 | `pplx_session_status` | Cookie validity / tier / expiry. |
